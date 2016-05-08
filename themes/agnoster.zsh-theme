@@ -112,6 +112,13 @@ prompt_git() {
       mode=" >R>"
     fi
 
+    num_untrack_files=$(git status --porcelain 2>/dev/null| grep "^??" | wc -l | sed -e 's/^[[:space:]]*//')
+    if [ $num_untrack_files -eq "0" ]; then
+      num_untrack_files=""
+    else
+      num_untrack_files=" ${num_untrack_files}"
+    fi
+
     setopt promptsubst
     autoload -Uz vcs_info
 
@@ -123,7 +130,7 @@ prompt_git() {
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
+    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}${num_untrack_files}"
   fi
 }
 
